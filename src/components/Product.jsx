@@ -1,13 +1,16 @@
 import { FaShoppingCart } from "react-icons/fa";
-
+// context
+import { GlobalContext } from "../context/GlobalContext";
+import { useContext } from "react";
 function Product({ product }) {
-  const itemInCard = true;
+  const { dispatch, cart } = useContext(GlobalContext);
+  const itemInCard = cart.find((item) => item.id == product.id);
   return (
     <div className="card">
       <img
         className="card__image"
-        src={product.images}
-        width={100}
+        src={product.thumbnail}
+        width={50}
         alt="product name"
       />
       <div className="card__info">
@@ -15,15 +18,42 @@ function Product({ product }) {
         <small className="card__price">Price:{product.price} </small>
       </div>
       {!itemInCard && (
-        <button className="btn card__btn">
+        <button
+          onClick={() =>
+            dispatch({
+              type: "Add_to_cart",
+              payload: { ...product, amount: 1 },
+            })
+          }
+          className="btn card__btn"
+        >
           <FaShoppingCart /> Add
         </button>
       )}
       {itemInCard && (
         <div className="card-action-btn">
-          <button className="btn card__btn__amount">&#43;</button>
-          <span className="amount">10</span>
-          <button className="btn card__btn__amount">&#8722;</button>
+          <button
+            onClick={() =>
+              dispatch({ type: "INCREASE", payload: itemInCard.id })
+            }
+            className="btn card__btn__amount"
+          >
+            &#43;
+          </button>
+          <span className="amount">{itemInCard.amount}</span>
+
+          <button
+            onClick={() => {
+              if (itemInCard.amount === 1) {
+                return dispatch({ type: "delete", payload: itemInCard.id });
+              } else {
+                dispatch({ type: "DECREASE", payload: itemInCard.id });
+              }
+            }}
+            className="btn card__btn__amount"
+          >
+            &#8722;
+          </button>
         </div>
       )}
     </div>
