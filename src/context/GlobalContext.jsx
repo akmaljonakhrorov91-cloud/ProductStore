@@ -54,6 +54,12 @@ const reducer = (state, action) => {
         }
       );
       return { ...state, totalPrice, totalAmount };
+    case "Clear":
+      return {
+        cart: [],
+        totalPrice: 0,
+        totalAmount: 0,
+      };
     default:
       return state;
   }
